@@ -1,3 +1,7 @@
+from fileinput import filename
+import string
+
+
 STOP_WORDS = [
     'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has',
     'he', 'i', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the', 'to',
@@ -7,19 +11,21 @@ STOP_WORDS = [
 
 class FileReader:
     def __init__(self, filename):
-        pass
+        self.filename = filename
 
     def read_contents(self):
         """
         This should read all the contents of the file
         and return them as one string.
         """
-        raise NotImplementedError("FileReader.read_contents")
-
+        with open(self.filename) as file:
+            text_string = file.read()
+        return text_string
 
 class WordList:
-    def __init__(self, text):
-        pass
+    def __init__(self, text_string):
+        self.list = []
+        self.text = text_string
 
     def extract_words(self):
         """
@@ -27,7 +33,13 @@ class WordList:
         is responsible for lowercasing all words and stripping
         them of punctuation.
         """
-        raise NotImplementedError("WordList.extract_words")
+        self.list = self.text.lower().strip().split()
+        transformed_words = []
+        for word in self.list:
+            if word not in STOP_WORDS:
+                transformed_words.append(word.strip(string.punctuation))
+
+        # raise NotImplementedError("WordList.extract_words")
 
     def remove_stop_words(self):
         """
@@ -84,10 +96,10 @@ if __name__ == "__main__":
     if file.is_file():
         reader = FileReader(file)
         word_list = WordList(reader.read_contents())
-        word_list.extract_words()
-        word_list.remove_stop_words()
-        printer = FreqPrinter(word_list.get_freqs())
-        printer.print_freqs()
+        # word_list.extract_words()
+        # word_list.remove_stop_words()
+        # printer = FreqPrinter(word_list.get_freqs())
+        # printer.print_freqs()
     else:
         print(f"{file} does not exist!")
         sys.exit(1)
